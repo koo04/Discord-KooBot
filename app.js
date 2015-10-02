@@ -1,24 +1,28 @@
 var Discord = require('discord.js'),
-    Feed = require('feed-read'),
     Wordnet = require('wordnet');
 
 var myBot = new Discord.Client({queue: true});
 
 var idle = false;
 
+var games = [];
+
+myBot.on('serverNewMember', function(user, server) {
+  myBot.sendMessage('#general',user.mention() + " Welcome to Sol Armada! \nPlease make sure to visit the website and forums! \nhttp://solarmada.com/", function(err, message) {
+    if(err) console.log("Yup error");
+  });
+});
+
 myBot.on('message', function(message){
   if(!idle){
     if(message.content === '!sleep') {
       myBot.reply(message, "I will go to sleep until told to !wake");
+      myBot.setStatusIdle();
       idle = true;
     }
     
-//    if(message.content === "!ping")
-//      myBot.reply(message, "pong");
-
-//    if(message.content === '!dance') {
-//      myBot.reply(message, "\n (•\_•)\n <)  )-   Don't cha wish\n /  \\\n (•_•)\n √( (>   your girlfriend was\n  /  \\\n (•_•)/\n <)  )   hot like me\n /  \\");
-//    }
+    if(message.content === "!ping")
+      myBot.reply(message, "pong");
     
     if(message.content.indexOf('!def') > -1) {
       var word = message.content.match(/.*!def *([^\n\r]*)/);
@@ -35,6 +39,7 @@ myBot.on('message', function(message){
   } else {
     if(message.content === '!wake') {
       myBot.reply(message, "I am awake and here to serve.");
+      myBot.setStatusOnline();
       idle = false;
     }
   }
