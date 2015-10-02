@@ -1,0 +1,24 @@
+{
+  "name": "sol-bot",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Sol Armada Bot",
+  "keywords": [],
+  "dependencies": {
+    "discord.js": "^3.6.3",
+    "feed-read": "0.0.1",
+    "forever": "^0.15.1",
+    "wordnet": "^0.1.2"
+  },
+  "scripts": {
+    "debug": "node debug app.js",
+    "start": "node app.js"
+  },
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/koo04/sol-bot.git"
+  },
+  "author": "Douglas DeVicariis",
+  "license": "GNU v2.0"
+}
