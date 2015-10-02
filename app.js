@@ -1,12 +1,12 @@
 var Discord = require('discord.js'),
-    Wordnet = require('wordnet');
+    Wordnet = require('wordnet'),
+    Request = require('request'),
+    Cheerio = require('cheerio'),
+    fs = require("fs"),
+    ships = require("./ships.json");;
 
 var myBot = new Discord.Client({queue: true});
-
 var idle = false;
-
-var games = [];
-
 var reminders = [];
 
 function textToTime(time, kind, callback){
@@ -21,6 +21,8 @@ function textToTime(time, kind, callback){
     
   return callback(true, null);
 };
+
+console.log(ships['data'][1]);
 
 myBot.on('serverNewMember', function(user, server) {
   myBot.sendMessage('#general',user.mention() + " Welcome to Sol Armada! \nPlease make sure to visit the website and forums! \nhttp://solarmada.com/", function(err, message) {
@@ -90,10 +92,12 @@ myBot.on('message', function(message){
           }, time));
           myBot.reply(message, "I will remind you.");
         } else {
+          who = split[0].match(/<(.*?)>/);
+          var id = who[1].replace("@","");
+          var user = myBot.getUser("id", id);
           reminders.push(setTimeout(function() {
-            who = split[0].match(/<(.*?)>/);
-            var id = who[1].replace("@","");
-            myBot.sendMessage(myBot.getUser("id", id), "Reminder: " + todo, function(err, message){
+            console.log(user);
+            myBot.sendMessage(user, "Reminder: " + todo, function(err, message){
               if(err) myBot.sendMessage(message, "I was not able to find that user");
             });
           }, time));
@@ -117,4 +121,4 @@ myBot.on('message', function(message){
   }
 });
 
-myBot.login('douglas@devicariis.org', 'M@st3r0811');
+//myBot.login('douglas@devicariis.org', 'M@st3r0811');
