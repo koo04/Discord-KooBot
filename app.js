@@ -8,6 +8,7 @@ var Discord = require('discord.js'),
 var myBot = new Discord.Client({queue: true});
 var idle = false;
 var reminders = [];
+var searching = false;
 
 function textToTime(time, kind, callback){
   if(kind == "seconds" || kind == "second")
@@ -22,7 +23,21 @@ function textToTime(time, kind, callback){
   return callback(true, null);
 };
 
-console.log(ships['data'][1]);
+function getShip(shipName, bot, message, callback) {
+  bot.sendMessage(message, "Searching the database...");
+  for(var i = 0; i < ships['data'].length; i++) {
+    var ship = ships['data'][i];
+    if(ship.name.toUpperCase().indexOf(shipName.toUpperCase()) > -1) {
+      console.log(ship.name + " is the ship!");
+      return callback(false, ship);
+    } else {
+      console.log(ship.name + " is not the ship. Looking for " + shipName);
+    }
+    if(i == ships['data'].length) {
+      return callback(true, null);
+    }
+  }
+}
 
 myBot.on('serverNewMember', function(user, server) {
   myBot.sendMessage('#general',user.mention() + " Welcome to Sol Armada! \nPlease make sure to visit the website and forums! \nhttp://solarmada.com/", function(err, message) {
@@ -41,6 +56,37 @@ myBot.on('message', function(message){
     if(message.content === "!ping")
       myBot.reply(message, "pong");
     
+    if(message.content.indexOf('!ship') > -1) {
+      var split = message.content.split(" ");
+      var shipName;
+      if(split.length > 1) {
+        if(split[1]) {
+          shipName = split[1];
+          if(split[2])
+            shipName = shipName + " " + split[2];
+          
+          getShip(shipName, myBot, message, function(err, ship){
+            if(err) myBot.reply(message, "That ship does not seem to be in my database.");
+
+            return myBot.reply(message, "Here is the ship information you requested: " + 
+                        "\nName: " + ship.name + 
+                        "\nHangar Ready: " + ship.production_status + 
+                        "\nFocus: " + ship.focus +
+                        "\nManufacturer: " + ship.manufacturer.name + 
+                        "\nLength: " + ship.length + 
+                        "\nHeight: " + ship.height + 
+                        "\nBeam: " + ship.beam + 
+                        "\nMass: " + ship.mass + 
+                        "\nCargo Capacity: " + ship.cargocapacity + 
+                        "\nMax Crew: " + ship.maxcrew + 
+                        "\nStore: https://robertsspaceindustries.com" + ship.url);
+          });
+        } else {
+          myBot.reply(message, "Sir, I require a ship name.");
+        }
+      }
+    }
+    
     if(message.content.indexOf('!def') > -1) {
       var word = message.content.match(/.*!def *([^\n\r]*)/);
       Wordnet.lookup(word[1], function(err, defs) {
@@ -51,6 +97,24 @@ myBot.on('message', function(message){
           myBot.reply(message, "The definition of: '" + word[1] + "' is:\n" + def.glossary);
         });
       });
+    }
+ 
+    if(message.content === "!ping")
+      myBot.reply(message, "pong");
+
+//    if(message.content === '!dance') {
+//      myBot.reply(message, "\n (•\_•)\n <)  )-   Don't cha wish\n /  \\\n (•_•)\n √( (>   your girlfriend was\n  /  \\\n (•_•)/\n <)  )   hot like me\n /  \\");
+//    }
+    
+    if(message.content.indexOf('!links')) {
+      var linkSplit = message.content.split(" ");
+      if(linkSplit.length > 1) {
+        for(var i = 0; i < linkSplit.length; i++) {
+          if(linkSplit[i].indexOf('-')) {
+            
+          }
+        }
+      }
     }
     
     if(message.content.indexOf('!remind') > -1) {
@@ -121,4 +185,4 @@ myBot.on('message', function(message){
   }
 });
 
-//myBot.login('douglas@devicariis.org', 'M@st3r0811');
+myBot.login('douglas@devicariis.org', 'M@st3r0811');
