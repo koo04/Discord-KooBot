@@ -106,7 +106,7 @@ myBot.on('message', function(message){
 //      myBot.reply(message, "\n (•\_•)\n <)  )-   Don't cha wish\n /  \\\n (•_•)\n √( (>   your girlfriend was\n  /  \\\n (•_•)/\n <)  )   hot like me\n /  \\");
 //    }
     
-    if(message.content.indexOf('!links')) {
+    if(message.content.indexOf('!links') > -1) {
       var linkSplit = message.content.split(" ");
       if(linkSplit.length > 1) {
         for(var i = 0; i < linkSplit.length; i++) {
@@ -115,6 +115,10 @@ myBot.on('message', function(message){
           }
         }
       }
+    }
+    
+    if(message.content.indexOf('!me') > -1) {
+      
     }
     
     if(message.content.indexOf('!remind') > -1) {
@@ -140,9 +144,7 @@ myBot.on('message', function(message){
       }
       
       for(var i = 1; i < marker; i++) {
-        if(!todo && split[i] == 'to') {
-          todo = split[i+1];
-        }
+        todo = split[i];
       }
       
       if(error) {
