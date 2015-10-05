@@ -3,7 +3,10 @@ var Discord = require('discord.js'),
     Request = require('request'),
     Cheerio = require('cheerio'),
     fs = require("fs"),
-    ships = require("./ships.json");;
+    ships = require("./ships.json"),
+    Deck = require('./blackjack/deck.js'),
+    Hand = require('./blackjack/hand.js');
+    BlackJack = require('./blackjack/BlackJack.js');
 
 var myBot = new Discord.Client({queue: true});
 var server;
@@ -11,6 +14,7 @@ var idle = false;
 var reminders = [];
 var searching = false;
 var players = new Array();
+var bjGames = new Array();
 
 
 myBot.on('ready', function() {
@@ -118,71 +122,102 @@ myBot.on('message', function(message){
 //      myBot.reply(message, "\n (•\_•)\n <)  )-   Don't cha wish\n /  \\\n (•_•)\n √( (>   your girlfriend was\n  /  \\\n (•_•)/\n <)  )   hot like me\n /  \\");
 //    }
 
-  if(message.content.indexOf('!links') > -1) {
-    var linkSplit = message.content.split(" ");
-    if(linkSplit.length > 1) {
-      for(var i = 0; i < linkSplit.length; i++) {
-        if(linkSplit[i].indexOf('-')) {
+//  if(message.content.indexOf('!links') > -1) {
+//    var linkSplit = message.content.split(" ");
+//    if(linkSplit.length > 1) {
+//      for(var i = 0; i < linkSplit.length; i++) {
+//        if(linkSplit[i].indexOf('-')) {
+//
+//        }
+//      }
+//    }
+//  }
 
-        }
-      }
+/**
+ * Credit Amount
+**/
+  if(message.content.indexOf('!cred') > -1) {
+    if(players[message.author.id]) {
+      myBot.sendMessage(message.author, "Credit Amount: " + players[message.author.id].credits);
     }
   }
-
-  if(message.content.indexOf('!me') > -1) {
-
-  }
-
-  if(message.content.indexOf('!remind') > -1) {
-    var task = message.content.match(/.*!remind *([^\n\r]*)/);
-    var split = task[1].toString().split(" ");
-    var who = split[0];
-    var error = false;
-    var todo;
-    var time;
-    var marker;
-
-    for(var i = split.length; i > 0; i--) {
-      if(!time && split[i] == 'in') {
-        textToTime(split[i+1], split[i+2], function(err, t){
-          if(err) { 
-            console.log("error");
-            error = true;
-          }
-          time = t;
-        });
-        marker = i;
-      }
-    }
-
-    for(var i = 1; i < marker; i++) {
-      todo = split[i];
-    }
-
-    if(error) {
-      myBot.reply(message, "I am not able to save that reminder.");
-    } else {
-      if(who == "me"){
-        reminders.push(setTimeout(function() {
-            myBot.sendMessage(message.author, "Reminder: " + todo, function(err, message){
-              if(err) myBot.sendMessage(message, "I was not able to find that user");
+  
+  if(message.content.indexOf('!blackjack') > -1) {
+    var split = message.content.split(" ");
+    if(split.length > 1) {
+      var bet = parseInt(split[1])
+      if(bet) {
+        if(bet > 0) {
+          if(!bjGames[message.author.id]) {
+            bjGames[message.author.id] = new BlackJack.game(function(string) {
+              myBot.reply(message, string);
             });
-        }, time));
-        myBot.reply(message, "I will remind you.");
+            bjGames[message.author.id].bet = bet;
+          } else {
+            myBot.reply(message, "You are already in a game! Please finish that one before starting another hand.");
+          }
+        } else {
+          myBot.reply(message, "You need to actually bet some amount of credits.");
+        }
       } else {
-        who = split[0].match(/<(.*?)>/);
-        var id = who[1].replace("@","");
-        var user = myBot.getUser("id", id);
-        reminders.push(setTimeout(function() {
-          console.log(user);
-          myBot.sendMessage(user, "Reminder: " + todo, function(err, message){
-            if(err) myBot.sendMessage(message, "I was not able to find that user");
-          });
-        }, time));
-        myBot.reply(message, "I will remind them.");
+        myBot.reply(message, "That does not seem to be a number.");
       }
     }
   }
+  
+/**
+ * Reminders
+**/
+//  if(message.content.indexOf('!remind') > -1) {
+//    var task = message.content.match(/.*!remind *([^\n\r]*)/);
+//    var split = task[1].toString().split(" ");
+//    var who = split[0];
+//    var error = false;
+//    var todo;
+//    var time;
+//    var marker;
+//
+//    for(var i = split.length; i > 0; i--) {
+//      if(!time && split[i] == 'in') {
+//        textToTime(split[i+1], split[i+2], function(err, t){
+//          if(err) { 
+//            console.log("error");
+//            error = true;
+//          }
+//          time = t;
+//        });
+//        marker = i;
+//      }
+//    }
+//
+//    for(var i = 1; i < marker; i++) {
+//      todo = split[i];
+//    }
+//
+//    if(error) {
+//      myBot.reply(message, "I am not able to save that reminder.");
+//    } else {
+//      if(who == "me"){
+//        reminders.push(setTimeout(function() {
+//            myBot.sendMessage(message.author, "Reminder: " + todo, function(err, message){
+//              if(err) myBot.sendMessage(message, "I was not able to find that user");
+//            });
+//        }, time));
+//        myBot.reply(message, "I will remind you.");
+//      } else {
+//        who = split[0].match(/<(.*?)>/);
+//        var id = who[1].replace("@","");
+//        var user = myBot.getUser("id", id);
+//        reminders.push(setTimeout(function() {
+//          console.log(user);
+//          myBot.sendMessage(user, "Reminder: " + todo, function(err, message){
+//            if(err) myBot.sendMessage(message, "I was not able to find that user");
+//          });
+//        }, time));
+//        myBot.reply(message, "I will remind them.");
+//      }
+//    }
+//  }
   
   if(message.content === '!status') {
     if(idle)
