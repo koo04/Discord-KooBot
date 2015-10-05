@@ -5,3 +5,4 @@ Gambling:
  * Poker
  * Blackjack
  * slots?
+me - (eg !me slaps @user with a fish)
