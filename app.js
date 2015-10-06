@@ -16,22 +16,6 @@ var searching = false;
 var players = new Array();
 var bjGames = new Array();
 
-
-myBot.on('ready', function() {
-  server = myBot.getServer();
-  server.members.forEach(function(member) {
-    if(member.status = 'online') {
-      if(!players[member.id]) {
-        players[member.id] = {};
-        player = players[member.id];
-        player.credits = 1500;
-        player.games = {};
-        
-      }
-    }
-  });
-});
-
 function textToTime(time, kind, callback){
   if(kind == "seconds" || kind == "second")
     return callback(false, parseInt(time) * 1000);
@@ -60,6 +44,20 @@ function getShip(shipName, bot, message, callback) {
     }
   }
 }
+ 
+myBot.on('ready', function() {
+//  server = myBot.getServer();
+//  console.info(server);
+//  server.members.forEach(function(member) {
+//    if(member.status = 'online') {
+//      if(!players[member.id]) {
+//        players[member.id] = {};
+//        player = players[member.id];
+//        player.credits = 1500;
+//      }
+//    }
+//  });
+});
 
 myBot.on('serverNewMember', function(user, server) {
   myBot.sendMessage('#general',user.mention() + " Welcome to Sol Armada! \nPlease make sure to visit the website and forums! \nhttp://solarmada.com/", function(err, message) {
@@ -146,22 +144,76 @@ myBot.on('message', function(message){
     var split = message.content.split(" ");
     if(split.length > 1) {
       var bet = parseInt(split[1])
-      if(bet) {
-        if(bet > 0) {
-          if(!bjGames[message.author.id]) {
-            bjGames[message.author.id] = new BlackJack.game(function(string) {
-              myBot.reply(message, string);
-            });
-            bjGames[message.author.id].bet = bet;
+      if(players[message.author.id]) {
+        if(bet) {
+          if(bet > 0) {
+            if(players[message.author.id].credits >= bet) {
+                if(!bjGames[message.author.id]) {
+                  bjGames[message.author.id] = new BlackJack(bet, function(string) {
+                    myBot.reply(message, string);
+                  });
+                } else {
+                  myBot.reply(message, "You are already in a game! Please finish that one before starting another hand.");
+                }
+            } else {
+              myBot.reply(message, "You do not have that much to bet!");
+            }
           } else {
-            myBot.reply(message, "You are already in a game! Please finish that one before starting another hand.");
+            myBot.reply(message, "You need to actually bet some amount of credits.");
           }
         } else {
-          myBot.reply(message, "You need to actually bet some amount of credits.");
+          myBot.reply(message, "That does not seem to be a number.");
         }
       } else {
-        myBot.reply(message, "That does not seem to be a number.");
+        players[message.author.id] = {};
+        player = players[message.author.id];
+        player.credits = 1500;
+        bjGames[message.author.id] = new BlackJack(bet, function(string) {
+          myBot.reply(message, string);
+        });
       }
+    }
+  }
+  
+  if(message.content === '!hit') {
+    if(bjGames[message.author.id]) {
+      bjGames[message.author.id].play(true, function(status, string) {
+        if(status == 0) {
+          myBot.reply(message, string);
+        }
+        if(status == 1) {
+          myBot.reply(message, string);
+          players[message.author.id].credits = players[message.author.id].credits + bjGames[message.author.id].bet;
+          delete bjGames[message.author.id];
+        }
+        if(status == 2) {
+          myBot.reply(message, string);
+          players[message.author.id].credits = players[message.author.id].credits - bjGames[message.author.id].bet;
+          delete bjGames[message.author.id];
+        }
+      });
+    } else {
+      myBot.reply(message, "You are not in a game!");
+    }
+  }
+  
+  if(message.content === '!stay') {
+    if(bjGames[message.author.id]) {
+      bjGames[message.author.id].play(false, function(status, string) {
+        if(status == 1) {
+          myBot.reply(message, string);
+          players[message.author.id].credits = players[message.author.id].credits + bjGames[message.author.id].bet;
+          delete bjGames[message.author.id];
+        }
+        if(status == 2) {
+          myBot.reply(message, string);
+          console.log(string);
+          players[message.author.id].credits = players[message.author.id].credits - bjGames[message.author.id].bet;
+          delete bjGames[message.author.id];
+        }
+      });
+    } else {
+      myBot.reply(message, "You are not in a game!");
     }
   }
   

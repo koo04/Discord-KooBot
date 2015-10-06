@@ -1,72 +1,76 @@
-var exports = module.exports = {};
 var Deck = require('./Deck.js');
 var Hand = require('./Hand.js');
 
-var deck, player, house;
-
-// Player bet
-var bet;
-
-exports.game = function(callback) {
-
+function BlackJack(bet, callback) {
+  this.bet = bet;
+  
   // Create a new deck and shuffle it
-  deck = new Deck().shuffle();
+  this.deck = new Deck().shuffle();
 
   // Create a new hand for the player
-  player = new Hand();
+  this.player = new Hand();
 
   // Create a new hand for the House
-  house = new Hand();
+  this.house = new Hand();
   
   // The player draws two cards from the deck
-  player.add(deck.draw());
-  player.add(deck.draw());
-
-  // House gets a card
-  house.add(deck.draw());
-  console.log(house.toString());
+  this.player.add(this.deck.draw());
+  this.player.add(this.deck.draw());
+//
+//  // House gets a card
+  this.house.add(this.deck.draw());
+//  console.log(this.house.toString());
   // Report the Hands delt
-//  var s = "\nYour Hand:\n" + player.toString() + "\nHouse Hand:\n" + house.toString();
-//  
-//  // House gets a card hidden to the player
-//  house.add(deck.draw());
-//  
-//  return callback(s);
+  var s = "\nYour Hand:\n" + this.player.toString() + "\nHouse Hand:\n" + this.house.toString();
+  
+  // House gets a card hidden to the player
+  this.house.add(this.deck.draw());
+  
+  return callback(s);
 }
 
 // Deal or House plays. 0 = playing, 1 = player win, 2 = house win
-exports.play = function(hit, callback) {
+BlackJack.prototype.play = function(hit, callback) {
+  console.log("Doing a play");
   if (hit) {
-    player.add(deck.draw());
+    console.log("Player Hit");
+    this.player.add(this.deck.draw());
     var s = "";
-    if (player.bust()) {
-      s = "BUST\n" + player.toString();
-      return callback(2, player.toString());
+    console.log(this.player.bust());
+    if (this.player.bust()) {
+      console.log("Player Busted on Hit");
+      s = "BUST\n" + this.player.toString();
+      return callback(2, s);
     } else {
-      s = "HITTING\n" + player.toString();
+      s = "\n" + this.player.toString();
       return callback(0, s);
     }
   } else {
-    s = "STAYING\n" + player.toString();
-    house.add(deck.draw());
-
-    if(!house.bust()) {
-      s.concat("\nHouse Drew\n" + house.toString());
+    console.log("Player stayed");
+    s = "STAYING\n" + this.player.toString();
+    console.log("House score: " + this.house.score());
+    if(this.house.score() > this.player.score() && !this.house.bust()) {
+        s = "\nYou lost!\nYour hand: \n" + this.player.toString() + "\nHouses Hand: \n" + this.house.toString();
+        return callback(2, s);
     }
-
-    while(!house.bust() && house.score() < player.score() && house.score() < 21) {
-      house.add(deck.draw());
-      s.concat("\nHouse Drew Another\n" + house.toString());
-    }
+    while(!this.house.bust() && this.house.score() <= this.player.score()) {
+      console.log("House draw");
+      this.house.add(this.deck.draw());
+      s = "\nHouse Drew Another\n" + this.house.toString();
     
-    if(house.bust()) {
-      s.concat("\nYou win!\n" + player.toString() + "\n" + house.toString());
-      return callback(1, s);
-    }
-    
-    if(!house.bust() && house.score() > player.score()) {
-      s.concat("\nYou lost!\n" + player.toString() + "\n" + house.toString());
-      return callback(2, s);
+      if(this.house.bust()) {
+        console.log("House bust");
+        s = "\nYou win!\nYour hand: \n" + this.player.toString() + "\nHouses Hand: \n" + this.house.toString();
+        return callback(1, s);
+      }
+
+      if(!this.house.bust() && this.house.score() > this.player.score()) {
+        console.log("House won");
+        s = "\nYou lost!\nYour hand: \n" + this.player.toString() + "\nHouses Hand: \n" + this.house.toString();
+        return callback(2, s);
+      }
     }
   }
 }
+
+module.exports = BlackJack;

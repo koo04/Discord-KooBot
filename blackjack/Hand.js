@@ -1,22 +1,12 @@
-var exports = module.exports = {};
 var Card = require('./Card.js');
-var CardCollection = require('./CardCollection.js');
+
 /**
  * Hand constructor
  */
-exports.Hand = function(deck) {
-  
+function Hand() {
+  this.cards = new Array();
 };
 
-/**
- * The Hand class extends the CardCollection class
- */
-Hand.prototype = new CardCollection();
-Hand.prototype.constructor = Hand;
-
-/**
- * Go over this limit and you bust
- */
 Hand.prototype.limit = 21;
 
 /**
@@ -26,7 +16,6 @@ Hand.prototype.add = function(card) {
 	if (!card instanceof Card) {
 		throw new Error("Tried adding a non card to hand!");
 	}
-
 	this.cards.push(card);
 };
 
@@ -85,3 +74,5 @@ Hand.prototype.toString = function() {
 Hand.prototype.bust = function() {
 	return this.score() > this.limit;
 };
+
+module.exports = Hand;
