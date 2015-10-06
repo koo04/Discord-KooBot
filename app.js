@@ -4,8 +4,8 @@ var Discord = require('discord.js'),
     Cheerio = require('cheerio'),
     fs = require("fs"),
     ships = require("./ships.json"),
-    Deck = require('./blackjack/deck.js'),
-    Hand = require('./blackjack/hand.js');
+    Deck = require('./blackjack/Deck.js'),
+    Hand = require('./blackjack/Hand.js');
     BlackJack = require('./blackjack/BlackJack.js'),
     players = require('./players.json');
 
