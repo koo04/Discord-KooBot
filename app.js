@@ -16,6 +16,9 @@ var reminders = [];
 var searching = false;
 var bjGames = new Array();
 
+/**
+ * Converts a String to Time in Milliseconds
+ **/
 function textToTime(time, kind, callback){
   if(kind == "seconds" || kind == "second")
     return callback(false, parseInt(time) * 1000);
@@ -29,6 +32,13 @@ function textToTime(time, kind, callback){
   return callback(true, null);
 };
 
+/**
+ * Gets the request ship.
+ * shipName - String
+ * bot - Discord Client
+ * message - Discord Message
+ * callback - A function (Error, Ship)
+ **/
 function getShip(shipName, bot, message, callback) {
   bot.sendMessage(message, "Searching the database...");
   for(var i = 0; i < ships['data'].length; i++) {
@@ -45,17 +55,32 @@ function getShip(shipName, bot, message, callback) {
   }
 }
 
+/**
+ * Welcome a new member to the server.
+ **/
 myBot.on('serverNewMember', function(user, server) {
   myBot.sendMessage('#general',user.mention() + " Welcome to Sol Armada! \nPlease make sure to visit the website and forums! \nhttp://solarmada.com/", function(err, message) {
     if(err) console.log("Yup error");
   });
 });
 
+/**
+ * Do something on a message.
+ **/
 myBot.on('message', function(message){
+  /**
+   * Check if we are issueing a command.
+   **/
   if(message.content.charAt(0) === '!'){
+    /**
+     * Ping Pong. Used to test of the bot is working right.
+     **/
     if(message.content === "!ping")
       myBot.reply(message, "pong");
 
+    /**
+     * Ship. Get ship data from the ship json database.
+     **/
     if(message.content.indexOf('!ship') > -1) {
       var split = message.content.split(" ");
       var shipName;
@@ -87,6 +112,9 @@ myBot.on('message', function(message){
       }
     }
 
+    /**
+     * Definition. Get a definition of a word.
+     **/
     if(message.content.indexOf('!def') > -1) {
       var word = message.content.match(/.*!def *([^\n\r]*)/);
       Wordnet.lookup(word[1], function(err, defs) {
@@ -99,33 +127,18 @@ myBot.on('message', function(message){
       });
     }
 
-    if(message.content === "!ping")
-      myBot.reply(message, "pong");
-
-  //    if(message.content === '!dance') {
-  //      myBot.reply(message, "\n (•\_•)\n <)  )-   Don't cha wish\n /  \\\n (•_•)\n √( (>   your girlfriend was\n  /  \\\n (•_•)/\n <)  )   hot like me\n /  \\");
-  //    }
-
-  //  if(message.content.indexOf('!links') > -1) {
-  //    var linkSplit = message.content.split(" ");
-  //    if(linkSplit.length > 1) {
-  //      for(var i = 0; i < linkSplit.length; i++) {
-  //        if(linkSplit[i].indexOf('-')) {
-  //
-  //        }
-  //      }
-  //    }
-  //  }
-
-  /**
-   * Credit Amount
-  **/
+    /**
+     * Check how much credits a player has. Private messages amount.
+     **/
     if(message.content.indexOf('!cred') > -1) {
       if(players[message.author.id]) {
         myBot.sendMessage(message.author, "Credit Amount: " + players[message.author.id].credits);
       }
     }
 
+    /**
+     * Blackjack. A game to play. Uses credits.
+     **/
     if(message.content.indexOf('!blackjack') > -1) {
       var split = message.content.split(" ");
       if(split.length > 1) {
@@ -158,9 +171,14 @@ myBot.on('message', function(message){
             myBot.reply(message, string);
           });
         }
+      } else {
+        myBot.reply(message, "You need give a betting amount.\n!blackjack <amount>");
       }
     }
-
+  
+    /**
+     * Hit. Get a new card in blackjack.
+     **/
     if(message.content === '!hit') {
       if(bjGames[message.author.id]) {
         bjGames[message.author.id].play(true, function(status, string) {
@@ -190,6 +208,9 @@ myBot.on('message', function(message){
       }
     }
 
+    /**
+     * Stay. Keep the current hand in blackjack and let house play.
+     **/
     if(message.content === '!stay') {
       if(bjGames[message.author.id]) {
         bjGames[message.author.id].play(false, function(status, string) {
@@ -214,78 +235,22 @@ myBot.on('message', function(message){
       } else {
         myBot.reply(message, "You are not in a game!");
       }
-    }
-
-  /**
-   * Reminders
-  **/
-  //  if(message.content.indexOf('!remind') > -1) {
-  //    var task = message.content.match(/.*!remind *([^\n\r]*)/);
-  //    var split = task[1].toString().split(" ");
-  //    var who = split[0];
-  //    var error = false;
-  //    var todo;
-  //    var time;
-  //    var marker;
-  //
-  //    for(var i = split.length; i > 0; i--) {
-  //      if(!time && split[i] == 'in') {
-  //        textToTime(split[i+1], split[i+2], function(err, t){
-  //          if(err) { 
-  //            console.log("error");
-  //            error = true;
-  //          }
-  //          time = t;
-  //        });
-  //        marker = i;
-  //      }
-  //    }
-  //
-  //    for(var i = 1; i < marker; i++) {
-  //      todo = split[i];
-  //    }
-  //
-  //    if(error) {
-  //      myBot.reply(message, "I am not able to save that reminder.");
-  //    } else {
-  //      if(who == "me"){
-  //        reminders.push(setTimeout(function() {
-  //            myBot.sendMessage(message.author, "Reminder: " + todo, function(err, message){
-  //              if(err) myBot.sendMessage(message, "I was not able to find that user");
-  //            });
-  //        }, time));
-  //        myBot.reply(message, "I will remind you.");
-  //      } else {
-  //        who = split[0].match(/<(.*?)>/);
-  //        var id = who[1].replace("@","");
-  //        var user = myBot.getUser("id", id);
-  //        reminders.push(setTimeout(function() {
-  //          console.log(user);
-  //          myBot.sendMessage(user, "Reminder: " + todo, function(err, message){
-  //            if(err) myBot.sendMessage(message, "I was not able to find that user");
-  //          });
-  //        }, time));
-  //        myBot.reply(message, "I will remind them.");
-  //      }
-  //    }
-  //  }
-
-  //  if(message.content === '!status') {
-  //    if(idle)
-  //      myBot.reply(message, "zZzZzZz");
-  //    else
-  //      myBot.reply(message, "I am awaiting orders.");
-  //  }
-  
+    }  
   }
 });
 
+/**
+ * Bots Login
+ **/
 myBot.login('douglas@devicariis.org', 'M@st3r0811');
 
+/**
+ * Save the player data on exit command.
+ **/
 process.on('SIGINT', function() {
   fs.writeFile( "players.json", JSON.stringify( players ), "utf8", function(err){
     if(err) console.log('Error when saving players!');
-    console.log('All saved');
+    console.log('\nAll saved\n');
     process.exit();
   });
 });
