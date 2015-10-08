@@ -7,7 +7,8 @@ var Discord = require('discord.js'),
     Deck = require('./blackjack/Deck.js'),
     Hand = require('./blackjack/Hand.js');
     BlackJack = require('./blackjack/BlackJack.js'),
-    players = require('./players.json');
+    players = require('./players.json'),
+    announcements = require('./announcements.json');
 
 var myBot = new Discord.Client({queue: true});
 var server;
@@ -53,6 +54,20 @@ function getShip(shipName, bot, message, callback) {
       return callback(true, null);
     }
   }
+}
+
+/**
+ * Check the forums for new announcements.
+ **/
+function getAnnouncements(bot) {
+  feed("http://forum.solarmada.com/category/1.rss", function(err, articals) {
+    if(err) return res.json({ message: err });
+    if(articals != announcements) {
+      console.log("New Announcements!");
+    } else {
+      console.log("Same");
+    }
+  });
 }
 
 /**
@@ -149,7 +164,8 @@ myBot.on('message', function(message){
               if(players[message.author.id].credits >= bet) {
                   if(!bjGames[message.author.id]) {
                     bjGames[message.author.id] = new BlackJack(bet, function(string) {
-                      myBot.reply(message, string);
+                      myBot.reply(message.author, "Please play by PMing me. That way we don't disturb others in public areas.");
+                      myBot.reply(message.author, string);
                     });
                   } else {
                     myBot.reply(message, "You are already in a game! Please finish that one before starting another hand.");
