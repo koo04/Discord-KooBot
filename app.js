@@ -7,8 +7,8 @@ var Discord = require('discord.js'),
     Deck = require('./blackjack/Deck.js'),
     Hand = require('./blackjack/Hand.js');
     BlackJack = require('./blackjack/BlackJack.js'),
-    players = require('./players.json'),
-    announcements = require('./announcements.json');
+    players = require('./players.json');
+//    announcements = require('./announcements.json');
 
 var myBot = new Discord.Client({queue: true});
 var server;
@@ -59,16 +59,16 @@ function getShip(shipName, bot, message, callback) {
 /**
  * Check the forums for new announcements.
  **/
-function getAnnouncements(bot) {
-  feed("http://forum.solarmada.com/category/1.rss", function(err, articals) {
-    if(err) return res.json({ message: err });
-    if(articals != announcements) {
-      console.log("New Announcements!");
-    } else {
-      console.log("Same");
-    }
-  });
-}
+//function getAnnouncements(bot) {
+//  feed("http://forum.solarmada.com/category/1.rss", function(err, articals) {
+//    if(err) return res.json({ message: err });
+//    if(articals != announcements) {
+//      console.log("New Announcements!");
+//    } else {
+//      console.log("Same");
+//    }
+//  });
+//}
 
 /**
  * Welcome a new member to the server.
