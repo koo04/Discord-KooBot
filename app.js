@@ -7,9 +7,18 @@ var Discord = require('discord.js'),
     Deck = require('./blackjack/Deck.js'),
     Hand = require('./blackjack/Hand.js');
     BlackJack = require('./blackjack/BlackJack.js'),
-    players = require('./players.json'),
-    settings = require('./settings.json');
+    players = require('./players.json');
 //    announcements = require('./announcements.json');
+
+try {
+  var settings = require('./settings.json');
+} catch (err) {
+  if(err) {
+    var strJson = JSON.stringify({ email:"your@email.com", password:"Secure Password"});
+    fs.writeFileSync("settings.json", strJson);
+    var settings = require('./settings.json');
+  }
+}
 
 var myBot = new Discord.Client({queue: true});
 var server;
@@ -259,7 +268,20 @@ myBot.on('message', function(message){
 /**
  * Bots Login
  **/
-myBot.login(settings.email, settings.password);
+function login() {
+  try {
+    console.log("Logging in");
+    myBot.login(settings.email, settings.password);
+  } catch (err) {
+    console.log(err);
+    if(err) {
+      console.log("No login available, trying again in 5 seconds");
+      setTimeout(login(), 5000);
+    }
+  }
+}
+
+login();
 
 /**
  * Save the player data on exit command.
