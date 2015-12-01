@@ -9,7 +9,9 @@ What is done:
   * Blackjack
 
 TODO:
+
 More Dynamicly pull Ship Information
+
 Games:
 
 * Checkers
