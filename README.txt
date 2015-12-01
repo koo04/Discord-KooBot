@@ -1,8 +1,20 @@
+This is a basic Discord bot. Much work to be done.
+
+What is done:
+ * Credits
+ * Dictionary
+ * Star Citizen Ship Information
+ * Gambling:
+   * Blackjack
+
 TODO:
-Pull CIG Ship Information
-Checkers
+More Dynamicly pull Ship Information
+Games:
+ * Checkers
+ * Chess
 Gambling:
  * Poker
- * Blackjack
- * slots?
-me - (eg !me slaps @user with a fish)
+ * Slots
+Misc:
+ * Dice Rolls (D4 and up)
+ * Me Actions

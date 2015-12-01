@@ -7,7 +7,8 @@ var Discord = require('discord.js'),
     Deck = require('./blackjack/Deck.js'),
     Hand = require('./blackjack/Hand.js');
     BlackJack = require('./blackjack/BlackJack.js'),
-    players = require('./players.json');
+    players = require('./players.json'),
+    settings = require('./settings.json');
 //    announcements = require('./announcements.json');
 
 var myBot = new Discord.Client({queue: true});
@@ -258,7 +259,7 @@ myBot.on('message', function(message){
 /**
  * Bots Login
  **/
-myBot.login('douglas@devicariis.org', 'M@st3r0811');
+myBot.login(settings.email, settings.password);
 
 /**
  * Save the player data on exit command.
