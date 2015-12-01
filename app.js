@@ -66,9 +66,17 @@ function getShip(shipName, bot, message, callback) {
 }
 
 /**
+ * Returns a random number from 1 to given max.
+ */
+function roll(max) {
+  return Math.floor(Math.random() * (max - 1)) + 1;
+}
+
+/**
  * Do something on a message.
  */
 myBot.on('message', function(message){
+//  console.log(message);
   /**
    * Check if we are issueing a command.
    */
@@ -111,6 +119,17 @@ myBot.on('message', function(message){
           myBot.reply(message, "Sir, I require a ship name.");
         }
       }
+    }
+    
+    /**
+    * Roll. Roll a die.
+    */
+    if(message.content.indexOf('!roll') > -1) {
+      var rollSplit = message.content.split(" ");
+      if(rollSplit.length < 2) {
+        return myBot.reply(message, "You need to give me a max number to roll!\nExample:\n   !roll 20\nFor a D20 Die");
+      }
+      return myBot.reply(message, "You rolled a " + roll(rollSplit[1]));
     }
 
     /**

@@ -6,7 +6,7 @@
   "keywords": [],
   "dependencies": {
     "cheerio": "^0.19.0",
-    "discord.js": "^3.6.3",
+    "discord.js": "^5.0.0",
     "forever": "^0.15.1",
     "request": "^2.64.0",
     "wordnet": "^0.1.2"
