@@ -8,7 +8,6 @@ var Discord = require('discord.js'),
     Hand = require('./blackjack/Hand.js');
     BlackJack = require('./blackjack/BlackJack.js'),
     players = require('./players.json');
-//    announcements = require('./announcements.json');
 
 try {
   var settings = require('./settings.json');
@@ -29,7 +28,7 @@ var bjGames = new Array();
 
 /**
  * Converts a String to Time in Milliseconds
- **/
+ */
 function textToTime(time, kind, callback){
   if(kind == "seconds" || kind == "second")
     return callback(false, parseInt(time) * 1000);
@@ -49,7 +48,7 @@ function textToTime(time, kind, callback){
  * bot - Discord Client
  * message - Discord Message
  * callback - A function (Error, Ship)
- **/
+ */
 function getShip(shipName, bot, message, callback) {
   bot.sendMessage(message, "Searching the database...");
   for(var i = 0; i < ships['data'].length; i++) {
@@ -67,45 +66,22 @@ function getShip(shipName, bot, message, callback) {
 }
 
 /**
- * Check the forums for new announcements.
- **/
-//function getAnnouncements(bot) {
-//  feed("http://forum.solarmada.com/category/1.rss", function(err, articals) {
-//    if(err) return res.json({ message: err });
-//    if(articals != announcements) {
-//      console.log("New Announcements!");
-//    } else {
-//      console.log("Same");
-//    }
-//  });
-//}
-
-/**
- * Welcome a new member to the server.
- **/
-myBot.on('serverNewMember', function(user, server) {
-  myBot.sendMessage('#general',user.mention() + " Welcome to Sol Armada! \nPlease make sure to visit the website and forums! \nhttp://solarmada.com/", function(err, message) {
-    if(err) console.log("Yup error");
-  });
-});
-
-/**
  * Do something on a message.
- **/
+ */
 myBot.on('message', function(message){
   /**
    * Check if we are issueing a command.
-   **/
+   */
   if(message.content.charAt(0) === '!'){
     /**
      * Ping Pong. Used to test of the bot is working right.
-     **/
+     */
     if(message.content === "!ping")
       myBot.reply(message, "pong");
 
     /**
      * Ship. Get ship data from the ship json database.
-     **/
+     */
     if(message.content.indexOf('!ship') > -1) {
       var split = message.content.split(" ");
       var shipName;
@@ -139,7 +115,7 @@ myBot.on('message', function(message){
 
     /**
      * Definition. Get a definition of a word.
-     **/
+     */
     if(message.content.indexOf('!def') > -1) {
       var word = message.content.match(/.*!def *([^\n\r]*)/);
       Wordnet.lookup(word[1], function(err, defs) {
@@ -154,7 +130,7 @@ myBot.on('message', function(message){
 
     /**
      * Check how much credits a player has. Private messages amount.
-     **/
+     */
     if(message.content.indexOf('!cred') > -1) {
       if(players[message.author.id]) {
         myBot.sendMessage(message.author, "Credit Amount: " + players[message.author.id].credits);
@@ -163,7 +139,7 @@ myBot.on('message', function(message){
 
     /**
      * Blackjack. A game to play. Uses credits.
-     **/
+     */
     if(message.content.indexOf('!blackjack') > -1) {
       var split = message.content.split(" ");
       if(split.length > 1) {
@@ -204,7 +180,7 @@ myBot.on('message', function(message){
   
     /**
      * Hit. Get a new card in blackjack.
-     **/
+     */
     if(message.content === '!hit') {
       if(bjGames[message.author.id]) {
         bjGames[message.author.id].play(true, function(status, string) {
@@ -236,7 +212,7 @@ myBot.on('message', function(message){
 
     /**
      * Stay. Keep the current hand in blackjack and let house play.
-     **/
+     */
     if(message.content === '!stay') {
       if(bjGames[message.author.id]) {
         bjGames[message.author.id].play(false, function(status, string) {
@@ -267,7 +243,7 @@ myBot.on('message', function(message){
 
 /**
  * Bots Login
- **/
+ */
 function login() {
   try {
     console.log("Logging in");
@@ -285,7 +261,7 @@ login();
 
 /**
  * Save the player data on exit command.
- **/
+ */
 process.on('SIGINT', function() {
   fs.writeFile( "players.json", JSON.stringify( players ), "utf8", function(err){
     if(err) console.log('Error when saving players!');
