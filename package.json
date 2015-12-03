@@ -1,8 +1,8 @@
 {
-  "name": "sol-bot",
+  "name": "Discord Koobot",
   "private": true,
   "version": "0.0.0",
-  "description": "Sol Armada Bot",
+  "description": "Discord Bot",
   "keywords": [],
   "dependencies": {
     "cheerio": "^0.19.0",
@@ -18,7 +18,7 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/koo04/sol-bot.git"
+    "url": "git://github.com/koo04/doscord-koobot.git"
   },
   "author": "Douglas DeVicariis",
   "license": "GNU v2.0"
