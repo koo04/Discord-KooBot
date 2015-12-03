@@ -5,7 +5,7 @@ var Discord = require('discord.js'),
     fs = require("fs"),
     ships = require("./ships.json"),
     Deck = require('./blackjack/Deck.js'),
-    Hand = require('./blackjack/Hand.js');
+    Hand = require('./blackjack/Hand.js'),
     BlackJack = require('./blackjack/BlackJack.js');
 
 try {
