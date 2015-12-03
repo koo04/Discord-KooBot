@@ -6,8 +6,7 @@ var Discord = require('discord.js'),
     ships = require("./ships.json"),
     Deck = require('./blackjack/Deck.js'),
     Hand = require('./blackjack/Hand.js');
-    BlackJack = require('./blackjack/BlackJack.js'),
-    players = require('./players.json');
+    BlackJack = require('./blackjack/BlackJack.js');
 
 try {
   var settings = require('./settings.json');
@@ -16,6 +15,16 @@ try {
     var strJson = JSON.stringify({ email:"your@email.com", password:"Secure Password"});
     fs.writeFileSync("settings.json", strJson);
     var settings = require('./settings.json');
+  }
+}
+
+try {
+  var players = require('./players.json');
+} catch (err) {
+  if(err) {
+    var strJson = JSON.stringify({});
+    fs.writeFileSync("players.json", strJson);
+  var players = require('./players.json');
   }
 }
 
