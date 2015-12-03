@@ -129,7 +129,11 @@ myBot.on('message', function(message){
       if(rollSplit.length < 2) {
         return myBot.reply(message, "You need to give me a max number to roll!\nExample:\n   !roll 20\nFor a D20 Die");
       }
-      return myBot.reply(message, "You rolled a " + roll(rollSplit[1]));
+      var rolled = roll(rollSplit[1]);
+      if(!isNaN(parseFloat(roll)))
+        return myBot.reply(message, "You rolled a " + rolled);
+      else
+        return myBot.reply(message, "You did not seem to give a number.\nExample:\n   !roll 20\nFor a D20 Die");
     }
 
     /**
