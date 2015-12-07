@@ -1,4 +1,5 @@
 var Discord = require('discord.js'),
+    util = require('util'),
     Wordnet = require('wordnet'),
     Request = require('request'),
     Cheerio = require('cheerio'),
@@ -6,13 +7,16 @@ var Discord = require('discord.js'),
     ships = require("./ships.json"),
     Deck = require('./blackjack/Deck.js'),
     Hand = require('./blackjack/Hand.js'),
-    BlackJack = require('./blackjack/BlackJack.js');
+    BlackJack = require('./blackjack/BlackJack.js'),
+    Icy = require('icy'),
+    Lame = require('lame');
+//    Speaker = require('speaker');
 
 try {
   var settings = require('./settings.json');
 } catch (err) {
   if(err) {
-    var strJson = JSON.stringify({ email:"your@email.com", password:"Secure Password"});
+    var strJson = JSON.stringify({ email:"your@email.com", password:"Secure Password", radioCast:"http://radio.url.com/"});
     fs.writeFileSync("settings.json", strJson);
     var settings = require('./settings.json');
   }
@@ -34,6 +38,21 @@ var idle = false;
 var reminders = [];
 var searching = false;
 var bjGames = new Array();
+
+/**
+ * Gets the id of a channel
+ */
+function getChannelId(name) {
+  var channels = myBot.channels;
+  
+  for(var i = 0; i < myBot.channels.length; i++) {
+    if(channels[i].name.toUpperCase().indexOf(name.toUpperCase()) > -1) {
+      return i.toString();
+    }
+  }
+  
+  return null;
+}
 
 /**
  * Converts a String to Time in Milliseconds
@@ -269,7 +288,40 @@ myBot.on('message', function(message){
       } else {
         myBot.reply(message, "You are not in a game!");
       }
-    }  
+    } 
+    /**
+     * End of BlackJack Commands
+     */
+    
+    /**
+     * Start a Radio Stream
+     */
+    if(message.content.indexOf('!join') > -1) {
+      var split = message.content.split(" ");
+      if(split.length > 1) {
+        var channelId = getChannelId(split[1]);
+        if(channelId != null) {
+          
+          myBot.joinVoiceChannel(myBot.channels[channelId], function (err, connection) {
+            if(err) console.error("Error joining Voice Channel:\n   " + err);
+          
+//            console.log("Starting Radio");
+//            Icy.get(settings.radioCast, function (res) {
+////            console.error(res.headers);
+//
+//              res.on('metadata', function (metadata) {
+//                var parsed = Icy.parse(metadata);
+//                console.info(parsed);
+//              });
+//
+////              var dec = res.pipe(new Lame.Decoder()).pipe(connection.playRawStream());
+//              connection.playStream(res, function(err, str){console.log(err); console.log(str)});
+
+//            });
+          });
+        }
+      }
+    }
   }
 });
 
