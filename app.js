@@ -305,23 +305,26 @@ myBot.on('message', function(message){
           myBot.joinVoiceChannel(myBot.channels[channelId], function (err, connection) {
             if(err) console.error("Error joining Voice Channel:\n   " + err);
           
-//            console.log("Starting Radio");
-//            Icy.get(settings.radioCast, function (res) {
-////            console.error(res.headers);
-//
-//              res.on('metadata', function (metadata) {
-//                var parsed = Icy.parse(metadata);
-//                console.info(parsed);
-//              });
-//
-////              var dec = res.pipe(new Lame.Decoder()).pipe(connection.playRawStream());
-//              connection.playStream(res, function(err, str){console.log(err); console.log(str)});
+            console.log("Starting Radio");
+            Icy.get(settings.radioCast, function (res) {
+//            console.error(res.headers);
 
-//            });
+              res.on('metadata', function (metadata) {
+                var parsed = Icy.parse(metadata);
+                console.info(parsed);
+              });
+
+              var dec = res.pipe(new Lame.Decoder());
+              connection.playStream(dec, function(err, str){console.log(err); console.log(str)});
+
+            });
           });
         }
       }
     }
+    /**
+     * End of Radio Stream
+     */
   }
 });
 
