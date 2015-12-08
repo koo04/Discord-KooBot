@@ -34,6 +34,7 @@ try {
 
 var myBot = new Discord.Client({queue: true});
 var server;
+var room;
 var idle = false;
 var reminders = [];
 var searching = false;
@@ -294,37 +295,50 @@ myBot.on('message', function(message){
      */
     
     /**
-     * Start a Radio Stream
+     * Join a Room
      */
     if(message.content.indexOf('!join') > -1) {
-      var split = message.content.split(" ");
+      var split = message.content.split(/ (.+)?/);
       if(split.length > 1) {
         var channelId = getChannelId(split[1]);
         if(channelId != null) {
-          
           myBot.joinVoiceChannel(myBot.channels[channelId], function (err, connection) {
             if(err) console.error("Error joining Voice Channel:\n   " + err);
-          
-            console.log("Starting Radio");
-            Icy.get(settings.radioCast, function (res) {
-//            console.error(res.headers);
-
-              res.on('metadata', function (metadata) {
-                var parsed = Icy.parse(metadata);
-                console.info(parsed);
-              });
-
-              var dec = res.pipe(new Lame.Decoder());
-              connection.playStream(dec, function(err, str){console.log(err); console.log(str)});
-
-            });
+            room = connection;
           });
         }
       }
     }
     /**
-     * End of Radio Stream
+     * End of Join a Room
      */
+    
+    /**
+     * Start the Radio
+     */
+    if(message.content.indexOf('!radio') > -1) {
+      var split = message.content.split(" ");
+      if(split.length > 1) {
+        var mode = split[1].toUpperCase();
+        if(mode === "ON") {
+          if(room != undefined) {
+            Icy.get(settings.radioCast, function (res) {
+
+              var dec = res.pipe(new Lame.Decoder());
+              room.playStream(dec, function(err, str) {
+                if(err) console.log(err);
+                console.log(str)
+              });
+
+            });
+          } else {
+            
+          }
+        } else if(mode === "OFF") {
+          
+        }
+      }
+    }
   }
 });
 
